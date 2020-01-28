@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import torch
 from aimaker.controllers import BaseController
-import aimaker.utils.util as util
+from aimaker.utils import fcnt_load
+
 
 class SimpleController(BaseController):
     def __init__(self, settings=None, **kwargs):
         super().__init__(settings)
 
         if settings is not None:
-            self.model_name = self.settings['controllers']['simple']['model']
+            self.model_name = settings['controllers']['simple']['model']
             self.criterion_name = settings['controllers']['simple']['criterion']
             self.optimizer_name = settings['controllers']['simple']['optimizer']
         else:
@@ -31,8 +33,13 @@ class SimpleController(BaseController):
             self.target = self.target.to(self.gpu_ids[0])
 
     def forward(self):
-        self.fake = self._data_paralel_if_use(self.real, self.model)
-        self.loss = self.criterion(self.fake, self.target)
+        if self.mode != "train":
+            with torch.no_grad():
+                self.fake = self._data_paralel_if_use(self.real, self.model)
+                self.loss = self.criterion(self.fake, self.target)
+        else:
+            self.fake = self._data_paralel_if_use(self.real, self.model)
+            self.loss = self.criterion(self.fake, self.target)
 
     def backward(self):
         self.optimizer.zero_grad()
@@ -40,10 +47,14 @@ class SimpleController(BaseController):
         self.optimizer.step()
 
     def setMode(self, mode):
+        self.mode = mode
         if mode == 'train':
             self.model = self.model.train(True)
         elif mode == 'test' or mode == 'valid':
-            self.model = self.model.eval()
+            self.model = self.model
+
+    def getModel(self):
+        return self.model
 
     def saveModels(self):
         self._saveModel(self.model, "simple")
@@ -53,7 +64,7 @@ class SimpleController(BaseController):
         model_factory = mf.ModelFactory(self.settings)
 
         try:
-            model_path = util.fcnt_load(self.checkpoints_dir, "simple", "pth")
+            model_path = fcnt_load(self.checkpoints_dir, "simple", "pth")
             self.model = self._loadModel(model_path, self.gpu_ids[0])
         except:
             import traceback

@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.autograd as autograd
 
-import aimaker.utils.util as util
+from aimaker.utils import SettingHandler
 
 class CycleGANController:
     def __init__(self, settings):
@@ -16,7 +16,7 @@ class CycleGANController:
         import aimaker.optimizers.optimizer_factory as of
 
         self.settings = settings
-        ch = util.SettingHandler(settings)
+        ch = SettingHandler(settings)
         
         self.gpu_ids = ch.getGPUID()
         self.checkpoints_dir = ch.getCheckPointsDir()

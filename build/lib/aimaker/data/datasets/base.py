@@ -12,14 +12,14 @@ import torch.utils.data.dataloader as dataloader
 import importlib
 import data_source.data_source_factory as dsf
 from   data_source.data_source import DataSourceFromCSV
-import aimaker.utils.util as util
+from aimaker.utils import SettingHandler
 
 class BaseDataset(data.Dataset):
     def __init__(self, setting=None):
         super(BaseDataset, self).__init__()
 
         self.setting = setting
-        self.ch = util.SettingHandler(setting)
+        self.ch = SettingHandler(setting)
         self.mode = 'train'
         self.nom_transform    = self.ch.getNormalizeTransform()
         self.to_tensor        = transforms.ToTensor()
@@ -32,7 +32,6 @@ class BaseDataset(data.Dataset):
         self._setDataSource()
 
     def getDataLoader(self):
-        input(len(self))
         return dataloader.DataLoader(self,
                                      batch_size=self.ch.getBatchSize(self.mode),
                                      shuffle=self.is_shuffle,

@@ -1,5 +1,5 @@
 import torch.nn as nn
-import aimaker.utils.util as util
+from aimaker.utils import SettingHandler
 
 from aimaker.models import NormalizeFactory
 from aimaker.layers.pad_factory import PadFactory
@@ -9,7 +9,7 @@ from aimaker.models import BaseModel
 class ResNetForClassificationModel(BaseModel):
     def __init__(self, setting):
         super(ResNetForClassificationModel, self).__init__(setting)
-        ch = util.SettingHandler(setting)
+        ch = SettingHandler(setting)
         n_trim = int(setting['models']['resNet']['pretrain']['nTrim'])
         self.net = ch.getResNet()
         if setting['models']['resNet']['pretrain']['trimFullConnectedLayer']:
@@ -25,7 +25,7 @@ class ResNetForGeneratorModel(BaseModel):
         super(ResNetForGeneratorModel, self).__init__(setting)
 
         self.setting = setting
-        ch = util.SettingHandler(setting)
+        ch = SettingHandler(setting)
         input_nc         = int(setting['base']['numberOfInputImageChannels'])
         output_nc        = int(setting['base']['numberOfOutputImageChannels'])
         ngf              = int(setting['models']['resNet']['generator']['filterSize'])

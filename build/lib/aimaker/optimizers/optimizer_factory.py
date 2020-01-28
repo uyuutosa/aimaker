@@ -1,27 +1,24 @@
-import torch
-import torch.nn as nn
-import torch.optim as optim
-
-import aimaker.utils.util as util
+from torch.optim import Adam
+from aimaker.utils import BaseFactory
 
 
-class OptimizerFactory:
-    def __init__(self, config):
-        self.config   = config
-        self.optimizer_dic = {"adam": AdamOptimizer,
-                             }
-    def create(self, name):
-        self._is_exist(name)
-        return self.optimizer_dic[name]#(self.config)
+class AdamOptimizer:
+    def __init__(self, settings):
+        self.settings = settings
+                 
+    def __call__(self, params, settings):
+        return Adam(
+            params, lr=float(settings['optimizer']['base']['lr']),
+            betas=tuple(float(x) for x in settings['optimizer']['base']['betas'].split(",")),
+            eps=float(settings['optimizer']['base']['eps']),
+            weight_decay=float(settings['optimizer']['base']['weightDecay']),
+        )
 
-    def _is_exist(self, name):
-        if not name in self.optimizer_dic:
-            raise NotImplementedError('optimizer [%s] is not implemented' % name)
-    
-class AdamOptimizer(optim.Adam):
-    def __init__(self, params, config):
-        super(AdamOptimizer, self).__init__(params, lr=float(config['optimizer']['base']['lr']),
-                                            betas=tuple(float(x) for x in config['optimizer']['base']['betas'].split(",")),
-                                            eps=float(config['optimizer']['base']['eps']),
-                                            weight_decay=float(config['optimizer']['base']['weightDecay']),
-                                           )
+
+class OptimizerFactory(BaseFactory):
+    def __init__(self, settings):
+        super().__init__(settings)
+        self.adam = AdamOptimizer
+
+    def _create(self, name):
+        return eval(self.suffix+f"{name}(settings=self.settings)")

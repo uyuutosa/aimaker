@@ -3,9 +3,9 @@ from torch.nn import functional as F
 import torch.nn as nn
 #import aimaker.utils.util as util
 
-from aimaker.models.normalize_factory import NormalizeFactory
-from aimaker.layers.pad_factory import PadFactory
-from aimaker.models.base_model import BaseModel
+from aimaker.layers import NormalizeFactory
+from aimaker.layers import PadFactory
+from aimaker.models import BaseModel
 from aimaker.models import ResNetForClassificationModel
 
 

@@ -1,15 +1,15 @@
 import torch.nn as nn
 import torch
 
-from aimaker.models import NormalizeFactory
-from aimaker.models import ActivationFactory
+from aimaker.layers import NormalizeFactory
+from aimaker.layers import ActivationFactory
 from aimaker.models import BaseModel
-import aimaker.utils.util as util
+from aimaker.utils import SettingHandler
 
 class UnetBlock(nn.Module):
     def __init__(self, i, settings, medium_layers=[]):
         super(UnetBlock, self).__init__()
-        self.ch = util.SettingHandler(settings)
+        self.ch = SettingHandler(settings)
         self.n_input           = int(settings['models']['unet']['generator']['numberOfInputImageChannels'])
         self.n_output          = int(settings['models']['unet']['generator']['numberOfOutputImageChannels'])
         self.n_conv            = int(settings['models']['unet']['generator']['numComvolutionEachHierarchy'])
@@ -158,7 +158,7 @@ class UnetForGeneratorModel(BaseModel):
 
         super(UnetForGeneratorModel, self).__init__(settings)
         self.settings = settings
-        ch = util.SettingHandler(settings)
+        ch = SettingHandler(settings)
         self.gpu_ids     = ch.getGPUID()
         #self.pad_factory = PadFactory(settings)
 
@@ -169,7 +169,9 @@ class UnetForGeneratorModel(BaseModel):
             
             
     def forward(self, input):
-        if self.settings['base']['isDataParallel']:
-            return nn.parallel.data_parallel(self.model, input, self.gpu_ids)
-        else:
-            return self.model(input)
+        return self.model(input)
+
+       # if self.settings['base']['isDataParallel']:
+       #     return nn.parallel.data_parallel(self.model, input, self.gpu_ids)
+       # else:
+       #     return self.model(input)

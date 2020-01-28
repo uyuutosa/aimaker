@@ -1,16 +1,14 @@
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.autograd import Variable
 
-import aimaker.utils.util as util
+from aimaker.utils  import SettingHandler
 
 class BaseModel(nn.Module):
     def __init__(self, settings):
         super(BaseModel, self).__init__()
         if settings is not None:
             self.setSetting(settings)
-            ch = self.ch = util.SettingHandler(settings)
+            ch = self.ch = SettingHandler(settings)
             self.gpu_ids = ch.getGPUID()
         else:
             self.gpu_ids = [-1]

@@ -2,18 +2,45 @@ import glob
 import json
 import numbers
 import os
+import importlib
 
 import glob as g
 import numpy as np
 import torch
-import torch.nn as nn
 import torch.autograd as autograd
 import torchvision.transforms as tt
 import torchvision.models as m
+from torch.nn import *
 
 import aimaker.utils.transforms as my_transforms
 
-import pprint as pp
+
+class BaseFactory:
+    def __init__(self, settings):
+        self.settings = settings
+        self.module_name = None
+        self.suffix = ""
+
+    def _importIfExists(self, name):
+        try:
+            self.mod = importlib.import_module("{}".format(self.module_name))
+            self.suffix = 'self.mod.'
+        except:
+            pass
+            #import traceback
+            #traceback.print_exc()
+            #raise NotImplementedError(('{} is wrong key word for ' + \
+            #                           '{}. choose {}')\
+            #                           .format(name, self.__class__.__name__, self.data_dic.keys()))
+            if self.module_name is not None:
+                raise ImportError(f"{self.module_name} is not None, but it couldn't be imported.")
+
+    def _create(self, name):
+        return eval(self.suffix+f"{name}(settings=self.settings)")
+
+    def create(self, name):
+        self._importIfExists(name)
+        return self._create(name)
 
 def load_setting(path):
     n = len(path.split('/'))
@@ -25,7 +52,7 @@ def load_setting(path):
     lst_nested = [ x.split('/')[n:] for x in [ x.replace('.json', '') for x in path_lst]]
     setting_dic = {}
 
-    for lst, path in zip(lst_nested, path_lst):
+    for lst, path in zip(lst_nested, path_lst): 
         try:
             setting_dic = load_setting_rec(lst, path, setting_dic)
         except:

@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import aimaker.utils.util as util
+from aimaker.utils import SettingHandler
 from aimaker.models import BaseModel
 from aimaker.models import ActivationFactory
 
@@ -16,13 +16,13 @@ def swish(x):
     return x * F.sigmoid(x)
 
 class GLPatchGANModel(BaseModel):
-    def __init__(self, config):
-        super(GLPatchGANModel, self).__init__(config)
+    def __init__(self, settings):
+        super(GLPatchGANModel, self).__init__(settings)
 
         n = 1
-        if config['global settings']['controller'] == 'pix2pix':
+        if settings['global settings']['controller'] == 'pix2pix':
             n = 2 # for image pooling
-        input_nc = int(config['global local model settings']['numberOfInputImageChannels']) * n
+        input_nc = int(settings['global local model settings']['numberOfInputImageChannels']) * n
 
         self.conv1 = nn.Conv2d(input_nc, 64, 3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(64, 64, 3, stride=2, padding=1)
@@ -56,8 +56,8 @@ class GLPatchGANModel(BaseModel):
         self.concated_bn1 = nn.BatchNorm2d(256)
 
         # last activation
-        self.last_activation = ActivationFactory(config)\
-                .create(config['global local model settings']['last activation'])
+        self.last_activation = ActivationFactory(settings)\
+                .create(settings['global local model settings']['last activation'])
 
         self.o = torch.autograd.Variable(torch.ones(2**6))
         #self.o = torch.autograd.Variable(torch.ones(2**6).cuda(ch.getGPUID()[0]))
@@ -102,14 +102,14 @@ class GLPatchGANModel(BaseModel):
         return self.last_activation(concated_x)
 
 class GLGeneratorModel(BaseModel):
-    def __init__(self, config):
-        super(GLGeneratorModel, self).__init__(config)
+    def __init__(self, settings):
+        super(GLGeneratorModel, self).__init__(settings)
 
-        ch = util.ConfigHandler(config)
+        ch = SettingHandler(settings)
         n = 1
-        if config['global settings']['controller'] == 'pix2pix':
+        if settings['global settings']['controller'] == 'pix2pix':
             n = 2 # for image pooling
-        input_nc = int(config['global local model settings']['numberOfInputImageChannels']) * n
+        input_nc = int(settings['global local model settings']['numberOfInputImageChannels']) * n
 
         self.conv1 = nn.Conv2d(input_nc, 64, 3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(64, 64, 3, stride=2, padding=1)
@@ -143,8 +143,8 @@ class GLGeneratorModel(BaseModel):
         self.concated_bn1 = nn.BatchNorm2d(256)
 
         # last activation
-        self.last_activation = ActivationFactory(config)\
-                .create(config['global local model settings']['last activation'])
+        self.last_activation = ActivationFactory(settings)\
+                .create(settings['global local model settings']['last activation'])
 
         self.o = torch.autograd.Variable(torch.ones(2**6))
         #self.o = torch.autograd.Variable(torch.ones(2**6).cuda(ch.getGPUID()[0]))

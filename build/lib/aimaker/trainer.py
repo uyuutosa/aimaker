@@ -5,7 +5,7 @@ import sys
 import os
 
 import aimaker.viewer as viewer
-import aimaker.utils as util
+from aimaker.utils import load_setting, SettingHandler
 from aimaker.validators import Validator
 from aimaker.data.datasets import DatasetFactory
 from easydict import EasyDict
@@ -13,13 +13,12 @@ from easydict import EasyDict
 
 class Trainer:
     def __init__(self, setting_path="settings"):
-        self.settings = settings = EasyDict(util.load_setting(setting_path))
-        
-        self.sh = util.SettingHandler(settings)
+        self.settings = settings = EasyDict(load_setting(setting_path))
+        self.sh = SettingHandler(settings)
         self.controller = self.sh.getController()
         self.dataset = DatasetFactory(settings).create(settings.data.base.datasetName)
         self.valid_dataset = None
-        if settings.data.base.valid.datasetName is not None:
+        if settings.data.base.isValid:
             self.valid_dataset = DatasetFactory(settings).create(settings['data']['base']['valid']['datasetName'])
         self.data_loader = self.dataset.getDataLoader()
         if settings.data.base.isValid:
@@ -27,7 +26,6 @@ class Trainer:
 
         self.sheckpoint_dir = self.sh.getCheckPointsDir()
         self.viz = viewer.TensorBoardXViewer(settings)
-        #self.viz            = viewer.VisdomViewer(settings)
         self.train_monitor = viewer.TrainMonitor(settings)
 
         self.n_update_graphs = self.sh.getUpdateIntervalOfGraphs(self.dataset)
@@ -44,13 +42,15 @@ class Trainer:
         info.valid = EasyDict({"v_iter": 0, "current_n_iter": 0})
         return info
 
-    def train(self, n_epoch):
+    def train(self):
+        n_epoch = self.settings['base']['nEpoch']
         if self.settings['base']['isView']:
             self.viz.initGraphs()
             self.viz.initImages()
         
         train_n_iter = len(self.data_loader)
-        valid_n_iter = len(self.valid_data_loader)
+        if self.settings.data.base.isValid:
+            valid_n_iter = len(self.valid_data_loader)
 
         if os.path.exists(self.settings.base.infoPath):
             info = EasyDict(json.load(open(self.settings.base.infoPath)))
@@ -59,7 +59,8 @@ class Trainer:
 
         try:
             model_save_interval = self.sh.getModelSaveInterval()
-            model_save_interval_valid = self.sh.getModelSaveIntervalForValid()
+            if self.settings.data.base.isValid:
+                model_save_interval_valid = self.sh.getModelSaveIntervalForValid()
             for current_epoch in range(info.current_epoch, n_epoch):
                 info.current_epoch = current_epoch
                 if self.settings['data']['base']['isTrain']:
@@ -90,7 +91,7 @@ class Trainer:
                         self.valid_data_loader = self.valid_dataset.getDataLoader()
                         self.controller.setMode('valid')
                         info = self._learning('valid', info, current_epoch, self.valid_data_loader, valid_n_iter)
-                        if not current_epoch % model_save_interval_valid:
+                        if current_epoch != 0 and not current_epoch % model_save_interval_valid:
                             self.controller._saveModel(self.controller.getModel(), self.settings['validator']['base']['modelPath'], is_fcnt=False)
                             self.validator.upload()#self.settings['valid_data']['data']['base']['datasetName'])
 

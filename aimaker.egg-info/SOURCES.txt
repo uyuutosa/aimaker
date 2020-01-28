@@ -1,6 +1,7 @@
 README.md
 setup.py
 aimaker/__init__.py
+aimaker/investigator.py
 aimaker/trainer.py
 aimaker/viewer.py
 aimaker.egg-info/PKG-INFO
@@ -18,9 +19,6 @@ aimaker/controllers/pix2pix_divided_gpu_controller.py
 aimaker/controllers/pix2pix_hd_controller.py
 aimaker/controllers/simple_controller.py
 aimaker/controllers/starGAN_controller.py
-aimaker/controllers/mind/__init__.py
-aimaker/controllers/mind/optNet_controller.py
-aimaker/controllers/mind/pix2pix_controller.py
 aimaker/data/__init__.py
 aimaker/data/ann_parser.py
 aimaker/data/datasets/__init__.py
@@ -34,7 +32,10 @@ aimaker/data/datasets/pair.py
 aimaker/data/datasets/starGAN.py
 aimaker/data/datasets/super_resolution.py
 aimaker/layers/__init__.py
+aimaker/layers/activation_factory.py
+aimaker/layers/conv.py
 aimaker/layers/initialize_factory.py
+aimaker/layers/normalize_factory.py
 aimaker/layers/pad_factory.py
 aimaker/loss/GAN_loss.py
 aimaker/loss/__init__.py
@@ -47,7 +48,6 @@ aimaker/models/BG_model.py
 aimaker/models/PSPNet_model.py
 aimaker/models/SRGAN_model.py
 aimaker/models/__init__.py
-aimaker/models/activation_factory.py
 aimaker/models/adapter_model.py
 aimaker/models/base_model.py
 aimaker/models/base_sequential.py
@@ -57,7 +57,6 @@ aimaker/models/longbottle_model.py
 aimaker/models/mixing_model.py
 aimaker/models/model_factory.py
 aimaker/models/networks_stylegan.py
-aimaker/models/normalize_factory.py
 aimaker/models/patchGAN_md_model.py
 aimaker/models/patchGAN_model.py
 aimaker/models/resnet_model.py
@@ -77,9 +76,9 @@ aimaker/models/deeplab_v3_plus/sync_batchnorm/batchnorm.py
 aimaker/models/deeplab_v3_plus/sync_batchnorm/comm.py
 aimaker/models/deeplab_v3_plus/sync_batchnorm/replicate.py
 aimaker/models/deeplab_v3_plus/sync_batchnorm/unittest.py
-aimaker/models/mind/__init__.py
-aimaker/models/mind/optical_net.py
-aimaker/models/mind/patchGAN_md_model.py
+aimaker/models/handy_unet/__init__.py
+aimaker/models/handy_unet/handy_encoder.py
+aimaker/models/handy_unet/handy_unet.py
 aimaker/optimizers/__init__.py
 aimaker/optimizers/optimizer_factory.py
 aimaker/predictor/BG_predictor.py

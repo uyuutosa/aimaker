@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-import aimaker.utils.util as util
+from aimaker.utils import SettingHandler
 from aimaker.models.base_model import BaseModel
 
 
@@ -30,7 +30,7 @@ class PatchGANModel(BaseModel):
 
         # get global
         self.settings  = settings
-        ch           = util.SettingHandler(settings)
+        ch           = SettingHandler(settings)
         self.gpu_ids = ch.getGPUID()
         norm_layer   = ch.getNormLayer()
 

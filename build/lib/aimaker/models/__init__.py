@@ -1,7 +1,5 @@
 from .base_model import *
 from .base_sequential import *
-from .normalize_factory import *
-from .activation_factory import *
 from .adapter_model import *
 from .unet_model import *
 from .resnet_model import *
@@ -10,4 +8,4 @@ from .global_local_model import *
 from .model_factory import *
 from .PSPNet_model import *
 from .patchGAN_model import *
-from .mind import *
+from .handy_unet import *

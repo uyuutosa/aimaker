@@ -6,7 +6,7 @@ import importlib
 import torch
 import torch.nn as nn
 
-import aimaker.utils as util
+from aimaker.utils import SettingHandler, fcnt
 from aimaker.models import ModelFactory
 import aimaker.loss.loss_factory as lf# import LossFacotry
 from aimaker.optimizers import OptimizerFactory
@@ -23,7 +23,7 @@ class BaseController:
             self.is_showmode_info = False
 
         self.settings = settings
-        ch = util.SettingHandler(settings)
+        ch = SettingHandler(settings)
         self.gpu_ids = ch.getGPUID()
         self.checkpoints_dir = ch.getCheckPointsDir()
 
@@ -52,7 +52,7 @@ class BaseController:
         pass
 
     def getModel(self):
-        pass
+        pass 
 
     def setMode(self, mode):
         if mode == 'train':
@@ -77,7 +77,7 @@ class BaseController:
             self._saveModel(list(model)[0], file_name)
         else:
             if is_fcnt:
-                path = util.fcnt(self.checkpoints_dir, file_name, "pth")
+                path = fcnt(self.checkpoints_dir, file_name, "pth")
             else:
                 path = file_name
             state_dict = model.state_dict()

@@ -69,8 +69,10 @@ class AnnotationController:
         real, target  = inputs
 
         if len(self.gpu_ids):
-            real  = real.cuda(self.gpu_ids[0], async=True)
-            target = target.cuda(self.gpu_ids[0], async=True)
+            real  = real.cuda(self.gpu_ids[0])
+            target = target.cuda(self.gpu_ids[0])
+            #real  = real.cuda(self.gpu_ids[0], async=True)
+            #target = target.cuda(self.gpu_ids[0], async=True)
 
         self.real   = autograd.Variable(real, volatile=is_volatile)
         self.target = autograd.Variable(target, volatile=is_volatile)
