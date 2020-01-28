@@ -1,0 +1,17 @@
+{
+  "nEpoch": 200,
+  "controller": "SimpleController",
+  "normalize": "batch",
+  "checkPointsDirectory": "checkpoints",
+  "controllerModule": null,
+  "gpu_ids": ["cuda:0","cuda:1"],
+  "numberOfInputImageChannels": 3,
+  "numberOfOutputImageChannels": 3,
+  "initType": "xavier",
+  "isDataParallel": true,
+  "modelSaveInterval": 10,
+  "modelSaveIntervalForValid": 200,
+  "isView": false,
+  "isView": true,
+  "infoPath": "info.json"
+}

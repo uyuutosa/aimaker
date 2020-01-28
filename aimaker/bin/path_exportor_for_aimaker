@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo '' >> $1
+echo '# aimaker settings' >> $1
+echo `pwd` | sed 's/aimaker//' | sed 's/^/export PYTHONPATH=$PYTHONPATH:/' >> $1
+echo `pwd` | sed 's/^/export AIMAKER_PATH=/' >> $1
+echo 'export AIMAKER_APPS_PATH=$AIMAKER_PATH/apps' >> $1
+echo 'export PATH=$PATH:$AIMAKER_PATH/bin' >> $1
+echo done path export

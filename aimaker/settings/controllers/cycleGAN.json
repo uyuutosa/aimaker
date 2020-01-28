@@ -1,0 +1,17 @@
+{
+  "identity": 0.5,
+  "lambda_A": 10,
+  "lambda_B": 10,
+  "crop": "rondomCrop",
+  "cropSize": "1000x1000",
+  "generatorModel": "unet",
+  "discriminatorModel": "patchGAN",
+  "useLsGAN": true,
+  "cycleLoss": "L1",
+  "idtLoss": "L1",
+  "generatorOptimizer": "adam",
+  "D_AOptimizer": "adam",
+  "D_BOptimizer": "adam",
+  "secondCycle": "false",
+  "imagePoolSize": 50
+}

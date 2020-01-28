@@ -1,0 +1,13 @@
+checkpoints*
+exp*
+.ipynb_checkpoints
+*.clean
+__pycache__
+test*
+*.png
+*.jpg
+*.out
+*.mp4
+*.pyc
+*.swp
+*.swo

@@ -1,0 +1,5 @@
+{
+    "act": "ELU",
+    "n_res_block": 1,
+    "is_skip": true
+}

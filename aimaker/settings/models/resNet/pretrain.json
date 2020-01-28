@@ -1,0 +1,6 @@
+{
+ "isPretrain":true,
+ "layerNum":101,
+ "trimFullConnectedLayer":true,
+ "nTrim":2
+}
