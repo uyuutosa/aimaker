@@ -1,5 +1,0 @@
-{
-  "model": "HandyUNet",
-  "criterion": "MSE",
-  "optimizer": "AdamOptimizer"
-}

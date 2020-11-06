@@ -1,7 +1,0 @@
-{
-    "backbone"      : "resnet",
-    "output_stride" : 16, 
-    "num_classes"   : 52, 
-    "sync_bn"       : false,
-    "freeze_bn"     : false
-}

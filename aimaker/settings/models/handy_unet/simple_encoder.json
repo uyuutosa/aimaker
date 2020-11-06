@@ -1,6 +1,0 @@
-{
-    "n_in": 3,
-    "n_in_lst": [64,128,256],
-    "act": "ReLU",
-    "n_res_block_lst": [1, 1, 1]
-}

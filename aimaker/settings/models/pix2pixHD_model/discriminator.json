@@ -1,9 +1,0 @@
-{
-  "input_nc"      : 3,
-  "ndf"           : 64,
-  "n_layers"      : 3,
-  "norm_layer"    : "batch",
-  "use_sigmoid"   : true,
-  "num_D"         : 3,
-  "getIntermFeat" : false
-}

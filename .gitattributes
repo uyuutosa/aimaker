@@ -1,3 +1,0 @@
-trained_models filter=lfs diff=lfs merge=lfs -text
-trained_models/pose_model.pth filter=lfs diff=lfs merge=lfs -text
-aimaker/trained_models/pose_model.pth filter=lfs diff=lfs merge=lfs -text

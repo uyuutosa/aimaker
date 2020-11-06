@@ -1,8 +1,0 @@
-{
- "visdomPortNumber":8098,
- "isShowModelInfo":true,
- "visdomGraphTags":"loss",
- "visdomImageTags":"real,fake,target",
- "updateIntervalOfGraphs":100,
- "updateIntervalOfImages":100
-}
