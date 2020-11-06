@@ -13,6 +13,7 @@ import torchvision.models as m
 from torch.nn import *
 
 import aimaker.utils.transforms as my_transforms
+#from aimaker.data.datasets import DatasetOfPair
 
 
 class BaseFactory:
@@ -350,7 +351,7 @@ class SettingHandler:
         return factory.create(self.setting['base']['controller'])
 
     def getNormLayer(self):
-        from aimaker.models.normalize_factory import NormalizeFactory
+        from aimaker.models import NormalizeFactory
         factory = NormalizeFactory(self.setting)
         norm = self.setting['base']['normalize'] if self.setting is not None else "batch"
         return factory.create(norm)

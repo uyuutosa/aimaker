@@ -34,8 +34,11 @@ class HandyDecoder(BaseModel):
             self.n_res_block_lst = 1
 
         setattr(self, f"layer_1", ResizeConv(self.n_in_f_lst[0], self.n_in_lst[0]))
+        print(self.n_res_block_lst[1:-1])
+        input(self.n_res_block_lst)
         for i, (n_in_f, n_in, n_out, n_res_block) in enumerate(zip(self.n_in_f_lst[1:], self.n_in_lst[:-1], self.n_in_lst[1:], self.n_res_block_lst[1:-1])):
             print(n_in_f, n_in, n_out, n_res_block)
+            print(f"layer_{i+2}")
             setattr(self, f"layer_{i+2}", self._add_layer(n_in_f + n_in, n_in, n_out, n_res_block))
         self.output = self._add_last_layer(self.n_in_f_lst[-1] + self.n_in_lst[-1], self.n_out, self.n_res_block_lst[-1])
 
@@ -105,6 +108,7 @@ class HandyUNet(BaseModel):
         super().__init__(settings, **kwargs)
         self.settings = settings
             
+        print(settings.models.handy_unet.base.encoder_name)
         self.enc = ModelFactory(settings, is_base_sequential=False).create(settings.models.handy_unet.base.encoder_name)
         self.bottle_neck = HandyBottleNeck(settings, self.enc.n_in_f_lst[-1])
         self.dec = HandyDecoder(settings, self.enc.n_in_f_lst)

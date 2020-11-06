@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.autograd as autograd
 
-from aimaker.utils import SettingHandler
+from aimaker.utils import SettingHandler, ImagePool, fcnt, fcnt_load, peelVariable
 
 class CycleGANController:
     def __init__(self, settings):
@@ -25,8 +25,8 @@ class CycleGANController:
         optimizer_factory    = of.OptimizerFactory(settings)
 
         # for discriminator regularization
-        self.pool_fake_A = util.ImagePool(int(settings['controllers']['cycleGAN']['imagePoolSize']))
-        self.pool_fake_B = util.ImagePool(int(settings['controllers']['cycleGAN']['imagePoolSize']))
+        self.pool_fake_A = ImagePool(int(settings['controllers']['cycleGAN']['imagePoolSize']))
+        self.pool_fake_B = ImagePool(int(settings['controllers']['cycleGAN']['imagePoolSize']))
 
         name = settings['controllers']['cycleGAN']['generatorModel']
         self.netG_A = model_factory.create(name) 
@@ -85,18 +85,18 @@ class CycleGANController:
         print('------------------------------------------')
 
     def saveModels(self):
-        torch.save(self.netG_A, util.fcnt(self.checkpoints_dir, "netG_A", "pth"))
-        torch.save(self.netG_B, util.fcnt(self.checkpoints_dir, "netG_B", "pth"))
-        torch.save(self.netD_A, util.fcnt(self.checkpoints_dir, "netD_A", "pth"))
-        torch.save(self.netD_B, util.fcnt(self.checkpoints_dir, "netD_B", "pth"))
+        torch.save(self.netG_A, fcnt(self.checkpoints_dir, "netG_A", "pth"))
+        torch.save(self.netG_B, fcnt(self.checkpoints_dir, "netG_B", "pth"))
+        torch.save(self.netD_A, fcnt(self.checkpoints_dir, "netD_A", "pth"))
+        torch.save(self.netD_B, fcnt(self.checkpoints_dir, "netD_B", "pth"))
         print("done save models")
 
     def loadModels(self,):
         try:
-            self.netG_A = torch.load(util.fcnt_load(self.checkpoints_dir, "netG_A", "pth")).cuda(self.gpu_ids[0])
-            self.netG_B = torch.load(util.fcnt_load(self.checkpoints_dir, "netG_B", "pth")).cuda(self.gpu_ids[0])
-            self.netD_A = torch.load(util.fcnt_load(self.checkpoints_dir, "netD_A", "pth")).cuda(self.gpu_ids[0])
-            self.netD_B = torch.load(util.fcnt_load(self.checkpoints_dir, "netD_B", "pth")).cuda(self.gpu_ids[0])
+            self.netG_A = torch.load(fcnt_load(self.checkpoints_dir, "netG_A", "pth")).cuda(self.gpu_ids[0])
+            self.netG_B = torch.load(fcnt_load(self.checkpoints_dir, "netG_B", "pth")).cuda(self.gpu_ids[0])
+            self.netD_A = torch.load(fcnt_load(self.checkpoints_dir, "netD_A", "pth")).cuda(self.gpu_ids[0])
+            self.netD_B = torch.load(fcnt_load(self.checkpoints_dir, "netD_B", "pth")).cuda(self.gpu_ids[0])
         except:
             print("Checkpoint directory could not be found."+
                   "New directory {} is created.".format(self.checkpoints_dir))
@@ -112,29 +112,29 @@ class CycleGANController:
 
     def getLosses(self):
         
-        return {"all"     : util.peelVariable(self.loss_G)[0],
-                "DA"      : util.peelVariable(self.loss_D_A)[0],
-                "DB"      : util.peelVariable(self.loss_D_B)[0],
-                "cycleA"  : util.peelVariable(self.loss_cycle_A)[0],
-                "cycleB"  : util.peelVariable(self.loss_cycle_B)[0],
-                "cycleA2" : util.peelVariable(self.loss_cycle_A_2)[0],
-                "cycleB2" : util.peelVariable(self.loss_cycle_B_2)[0],
-                "idtA"    : util.peelVariable(self.loss_idt_A)[0],
-                "idtB"    : util.peelVariable(self.loss_idt_B)[0]}
+        return {"all"     : peelVariable(self.loss_G).item(),
+                "DA"      : peelVariable(self.loss_D_A).item(),
+                "DB"      : peelVariable(self.loss_D_B).item(),
+                "cycleA"  : peelVariable(self.loss_cycle_A).item(),
+                "cycleB"  : peelVariable(self.loss_cycle_B).item(),
+                "cycleA2" : peelVariable(self.loss_cycle_A_2).item(),
+                "cycleB2" : peelVariable(self.loss_cycle_B_2).item(),
+                "idtA"    : peelVariable(self.loss_idt_A).item(),
+                "idtB"    : peelVariable(self.loss_idt_B).item()}
 
 
     def getImages(self):
         
-        return {"realA"   : util.peelVariable(self.real_A)[0],
-                "fakeB"   : util.peelVariable(self.fake_B)[0],
-                "realB"   : util.peelVariable(self.real_B)[0],
-                "fakeA"   : util.peelVariable(self.fake_A)[0],
-                "cycleA"  : util.peelVariable(self.rec_A)[0],
-                "cycleB"  : util.peelVariable(self.rec_B)[0],
-                "cycleA2" : util.peelVariable(self.rec_A_2)[0],
-                "cycleB2" : util.peelVariable(self.rec_B_2)[0],
-                "idtA"    : util.peelVariable(self.idt_A)[0],
-                "idtB"    : util.peelVariable(self.idt_B)[0]}
+        return {"realA"   : peelVariable(self.real_A)[0],
+                "fakeB"   : peelVariable(self.fake_B)[0],
+                "realB"   : peelVariable(self.real_B)[0],
+                "fakeA"   : peelVariable(self.fake_A)[0],
+                "cycleA"  : peelVariable(self.rec_A)[0],
+                "cycleB"  : peelVariable(self.rec_B)[0],
+                "cycleA2" : peelVariable(self.rec_A_2)[0],
+                "cycleB2" : peelVariable(self.rec_B_2)[0],
+                "idtA"    : peelVariable(self.idt_A)[0],
+                "idtB"    : peelVariable(self.idt_B)[0]}
 
     def __call__(self, inputs, is_volatile=False):
         self.setInput(inputs, is_volatile)

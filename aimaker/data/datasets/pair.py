@@ -1,8 +1,8 @@
 from aimaker.data.datasets.base import BaseDataset
 
 class DatasetOfPair(BaseDataset):
-    def __init__(self, setting):
-        super(DatasetOfPair, self).__init__(setting)
+    def __init__(self, settings):
+        super(DatasetOfPair, self).__init__(settings)
 
     def _setDataSource(self):
         self.input_path  = self.setting['data']['datasets']['pair']['inputPath']
