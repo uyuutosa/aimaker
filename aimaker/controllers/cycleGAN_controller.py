@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+from easydict import EasyDict
 import itertools as it
 import torch
 import torch.nn as nn
@@ -11,7 +12,7 @@ from aimaker.utils import SettingHandler, ImagePool, fcnt, fcnt_load, peelVariab
 
 
 class CycleGANController:
-    def __init__(self, settings):
+    def __init__(self, settings: EasyDict):
         import aimaker.models.model_factory as mf
         import aimaker.loss.loss_factory as lf
         import aimaker.optimizers.optimizer_factory as of
@@ -26,32 +27,32 @@ class CycleGANController:
         optimizer_factory = of.OptimizerFactory(settings)
 
         # for discriminator regularization
-        self.pool_fake_A = ImagePool(int(settings['controllers']['cycleGAN']['imagePoolSize']))
-        self.pool_fake_B = ImagePool(int(settings['controllers']['cycleGAN']['imagePoolSize']))
+        self.pool_fake_A = ImagePool(int(settings.controllers.cyclegan.image_poolSize))
+        self.pool_fake_B = ImagePool(int(settings.controllers.cyclegan.image_poolSize))
 
-        name = settings['controllers']['cycleGAN']['generatorModel']
+        name = settings.controllers.cycle_gan.generator_model
         self.netG_A = model_factory.create(name)
         self.netG_B = model_factory.create(name)
         if len(self.gpu_ids):
             self.netG_A = self.netG_A.cuda(self.gpu_ids[0])
             self.netG_B = self.netG_B.cuda(self.gpu_ids[0])
 
-            name = settings['controllers']['cycleGAN']['discriminatorModel']
+            name = settings.controllers.cyclegan.discriminatorModel
             self.netD_A = model_factory.create(name)
             self.netD_B = model_factory.create(name)
             if len(self.gpu_ids):
                 self.netD_A = self.netD_A.cuda(self.gpu_ids[0])
                 self.netD_B = self.netD_B.cuda(self.gpu_ids[0])
 
-        self.loadModels()
+        self.load_models()
 
-        self.criterionGAN = loss_factory.create("GANLoss")
-        self.criterionCycle = loss_factory.create(settings['controllers']['cycleGAN']['cycleLoss'])
-        self.criterionIdt = loss_factory.create(settings['controllers']['cycleGAN']['idtLoss'])
+        self.criterion_gan = loss_factory.create("GANLoss")
+        self.criterion_cycle = loss_factory.create(settings.controllers.cycleGAN.cycle_loss)
+        self.criterion_idt = loss_factory.create(settings.controllers.cycleGAN.idt_loss)
         if len(self.gpu_ids):
-            self.criterionGAN = self.criterionGAN.cuda(self.gpu_ids[0])
-            self.criterionCycle = self.criterionCycle.cuda(self.gpu_ids[0])
-            self.criterionIdt = self.criterionIdt.cuda(self.gpu_ids[0])
+            self.criterion_gan = self.criterion_gan.cuda(self.gpu_ids[0])
+            self.criterion_cycle = self.criterion_cycle.cuda(self.gpu_ids[0])
+            self.criterion_idt = self.criterion_idt.cuda(self.gpu_ids[0])
 
             # initialize optimizers
         self.optimizer_G = optimizer_factory.create(settings['controllers']['cycleGAN']['generatorOptimizer'])(
@@ -64,9 +65,9 @@ class CycleGANController:
                 self.netD_B.parameters(), settings)
 
         if settings['ui']['base']['isShowModelInfo']:
-            self.showModel();
+            self.show_model()
 
-    def setMode(self, mode):
+    def set_mode(self, mode):
         if mode == 'train':
             self.netG_A = self.netG_A.train(True)
             self.netG_B = self.netG_B.train(True)
@@ -78,23 +79,23 @@ class CycleGANController:
             self.netD_A = self.netD_A.eval(True)
             self.netD_B = self.netD_B.eval(True)
 
-    def showModel(self):
+    def show_model(self):
         print('---------- Networks initialized ----------')
-        self.printNetwork(self.netG_A)
-        self.printNetwork(self.netG_B)
+        self.print_network(self.netG_A)
+        self.print_network(self.netG_B)
         if self.settings['data']['base']['isTrain']:
-            self.printNetwork(self.netD_A)
-            self.printNetwork(self.netD_B)
+            self.print_network(self.netD_A)
+            self.print_network(self.netD_B)
         print('------------------------------------------')
 
-    def saveModels(self):
+    def save_models(self):
         torch.save(self.netG_A, fcnt(self.checkpoints_dir, "netG_A", "pth"))
         torch.save(self.netG_B, fcnt(self.checkpoints_dir, "netG_B", "pth"))
         torch.save(self.netD_A, fcnt(self.checkpoints_dir, "netD_A", "pth"))
         torch.save(self.netD_B, fcnt(self.checkpoints_dir, "netD_B", "pth"))
         print("done save models")
 
-    def loadModels(self, ):
+    def load_models(self, ):
         try:
             self.netG_A = torch.load(fcnt_load(self.checkpoints_dir, "netG_A", "pth")).cuda(self.gpu_ids[0])
             self.netG_B = torch.load(fcnt_load(self.checkpoints_dir, "netG_B", "pth")).cuda(self.gpu_ids[0])
@@ -104,14 +105,14 @@ class CycleGANController:
             print("Checkpoint directory could not be found." +
                   "New directory {} is created.".format(self.checkpoints_dir))
 
-    def printNetwork(self, net):
+    def print_network(self, net):
         num_params = 0
         for param in net.parameters():
             num_params += param.numel()
         print(net)
         print('Total number of parameters: %d' % num_params)
 
-    def getLosses(self):
+    def get_losses(self):
 
         return {"all": peelVariable(self.loss_G).item(),
                 "DA": peelVariable(self.loss_D_A).item(),
@@ -123,7 +124,7 @@ class CycleGANController:
                 "idtA": peelVariable(self.loss_idt_A).item(),
                 "idtB": peelVariable(self.loss_idt_B).item()}
 
-    def getImages(self):
+    def get_images(self):
 
         return {"realA": peelVariable(self.real_A)[0],
                 "fakeB": peelVariable(self.fake_B)[0],
@@ -137,9 +138,9 @@ class CycleGANController:
                 "idtB": peelVariable(self.idt_B)[0]}
 
     def __call__(self, inputs, is_volatile=False):
-        self.setInput(inputs, is_volatile)
+        self.set_input(inputs, is_volatile)
 
-    def setInput(self, inputs, is_volatile=False):
+    def set_input(self, inputs, is_volatile=False):
         self.input_A = inputs[0]
         self.input_B = inputs[1]
         if len(self.gpu_ids):
@@ -165,17 +166,17 @@ class CycleGANController:
             self.loss_cycle_A_2 = [None]
             self.loss_cycle_B_2 = [None]
 
-        self._forwardGenerator()
-        self._forwardDiscriminator_A()
-        self._forwardDiscriminator_B()
+        self._forward_generator()
+        self._forward_discriminator_A()
+        self._forward_discriminator_B()
 
-    def _forwardDiscriminator_A(self):
+    def _forward_discriminator_A(self):
         fake_B = self.pool_fake_B.query(self.fake_B)
-        self.loss_D_A = self._backwardDiscriminator(self.netD_A, self.real_B, fake_B)
+        self.loss_D_A = self._backward_discriminator(self.netD_A, self.real_B, fake_B)
 
-    def _forwardDiscriminator_B(self):
+    def _forward_discriminator_B(self):
         fake_A = self.pool_fake_A.query(self.fake_A)
-        self.loss_D_B = self._backwardDiscriminator(self.netD_B, self.real_A, fake_A)
+        self.loss_D_B = self._backward_discriminator(self.netD_B, self.real_A, fake_A)
 
     def backward(self):
         # G_A and G_B
@@ -192,19 +193,19 @@ class CycleGANController:
         self.optimizer_D_B.step()
 
     # Backwards
-    def _backwardDiscriminator(self, netD, real, fake):
+    def _backward_discriminator(self, netD, real, fake):
         # Real
         pred_real = netD(real)
-        loss_D_real = self.criterionGAN(pred_real, True)
+        loss_D_real = self.criterion_gan(pred_real, True)
         # Fake
         pred_fake = netD(fake.detach())
-        loss_D_fake = self.criterionGAN(pred_fake, False)
+        loss_D_fake = self.criterion_gan(pred_fake, False)
         # Combined loss
         loss_D = (loss_D_real + loss_D_fake) * 0.5
         # backward
         return loss_D
 
-    def _forwardGenerator(self):
+    def _forward_generator(self):
         lambda_idt = float(self.settings['controllers']['cycleGAN']['identity'])
         lambda_A = float(self.settings['controllers']['cycleGAN']['lambda_A'])
         lambda_B = float(self.settings['controllers']['cycleGAN']['lambda_B'])
@@ -212,29 +213,29 @@ class CycleGANController:
         ## GAN loss
         # GAN loss D_A(G_A(A))
         pred_fake = self.netD_A(self.fake_B)
-        loss_G_A = self.criterionGAN(pred_fake, True)
+        loss_G_A = self.criterion_gan(pred_fake, True)
 
         # GAN loss D_B(G_B(B))
         pred_fake = self.netD_B(self.fake_A)
-        loss_G_B = self.criterionGAN(pred_fake, True)
+        loss_G_B = self.criterion_gan(pred_fake, True)
 
         self.loss_GAN = loss_G_A + loss_G_B
 
         ## cycle consistency loss
         # Forward cycle loss
-        self.loss_cycle_A = self.criterionCycle(self.rec_A, self.real_A) * lambda_A
+        self.loss_cycle_A = self.criterion_cycle(self.rec_A, self.real_A) * lambda_A
 
         # Backward cycle loss
-        self.loss_cycle_B = self.criterionCycle(self.rec_B, self.real_B) * lambda_B
+        self.loss_cycle_B = self.criterion_cycle(self.rec_B, self.real_B) * lambda_B
 
         self.loss_first_cycle = self.loss_cycle_A + self.loss_cycle_B
 
         ## Identity loss
         if lambda_idt > 0:
             # G_A should be identity if real_B is fed.
-            self.loss_idt_A = self.criterionIdt(self.idt_A, self.real_B) * lambda_B * lambda_idt
+            self.loss_idt_A = self.criterion_idt(self.idt_A, self.real_B) * lambda_B * lambda_idt
             # G_B should be identity if real_A is fed.
-            self.loss_idt_B = self.criterionIdt(self.idt_B, self.real_A) * lambda_A * lambda_idt
+            self.loss_idt_B = self.criterion_idt(self.idt_B, self.real_A) * lambda_A * lambda_idt
 
             self.loss_idt = self.loss_idt_A + self.loss_idt_B
         else:
@@ -244,8 +245,8 @@ class CycleGANController:
 
         ## second cycle consistensy (optional)
         if self.settings['controllers']['cycleGAN']['secondCycle']:
-            self.loss_cycle_B_2 = self.criterionCycle(self.rec_B_2, self.real_B) * lambda_B
-            self.loss_cycle_A_2 = self.criterionCycle(self.rec_A_2, self.real_A) * lambda_A
+            self.loss_cycle_B_2 = self.criterion_cycle(self.rec_B_2, self.real_B) * lambda_B
+            self.loss_cycle_A_2 = self.criterion_cycle(self.rec_A_2, self.real_A) * lambda_A
             self.loss_second_cycle = self.loss_cycle_A_2 + self.loss_cycle_B_2
         else:
             loss_cycle_B_2 = None

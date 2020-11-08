@@ -20,6 +20,7 @@ tornado = "==4.5.2"
 visdom = "==0.1.7"
 s3fs = "*"
 torch = "*"
+easydict = "*"
 
 [requires]
 python_version = "3.6"
