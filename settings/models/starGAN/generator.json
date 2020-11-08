@@ -1,0 +1,13 @@
+{
+  "typeNames": "Bald,Black_Hair,Blond_Hair,Brown_Hair,Gray_Hair,Male,Straight_Hair,Wavy_Hair,Young",
+  "generatorModel": "starGANGenerator",
+  "generatorOptimizer": "adam",
+  "discriminatorModel": "starGANDiscriminator",
+  "discriminatorCriterion": "GANLoss",
+  "reconstructCriterion": "L1",
+  "clsCriterion": "BCE",
+  "discriminatorOptimizer": "adam",
+  "lambdaCls": 1,
+  "lambdaRec": 10,
+  "lambdaGp": 10
+}

@@ -1,0 +1,5 @@
+{
+  "realLabel": 1,
+  "fakeLabel": 0,
+  "lossName": "MSE"
+}

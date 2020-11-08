@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mkdir $1
+
+cp $AIMAKER_APPS_PATH/* $1
+cp -r $AIMAKER_PATH/settings $1

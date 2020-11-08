@@ -1,0 +1,9 @@
+{
+  "nBlocks": 9,
+  "filterSize": 64,
+  "useBias": false,
+  "normalizeLayer": "instance",
+  "ueDropout": true,
+  "dropoutRate": 0.5,
+  "paddingType": "reflection"
+}

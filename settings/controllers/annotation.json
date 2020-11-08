@@ -1,0 +1,10 @@
+{
+  "generatorModel": "psp",
+  "generatorCriterion": "L1",
+  "generatorOptimizer": "adam",
+  "discriminatorModel": "patchGAN",
+  "discriminatorCriterion": "GANLoss",
+  "discriminatorOptimizer": "adam",
+  "lambda": 10,
+  "imagePoolSize": 50
+}

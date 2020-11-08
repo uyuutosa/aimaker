@@ -1,0 +1,7 @@
+{
+    "n_in": 3,
+    "model_name": "vgg19",
+    "is_pretrained": true,
+    "is_freeze": true,
+    "layer_names": "relu1_2,relu2_2,relu3_4,relu4_4,relu5_4"
+}

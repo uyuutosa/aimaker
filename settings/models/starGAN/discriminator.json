@@ -1,0 +1,8 @@
+{
+  "numberOfInputImageChannels": 3,
+  "numberOfOutputImageChannels": 3,
+  "imageSize": 512,
+  "convDim": 36,
+  "cDim": 9,
+  "repeatNum": 6
+}

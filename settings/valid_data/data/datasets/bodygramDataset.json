@@ -1,0 +1,15 @@
+{
+    "rootPath":"/media/yu/disk2/Bodygram Dropbox/datasets/sizeUSA",
+    "imgPath": "/media/yu/disk2/Bodygram Dropbox/datasets/validation/img/front",
+    "annPath": "/media/yu/disk2/Bodygram Dropbox/datasets/validation/ann_img/front",
+    "segPath": "/media/yu/disk2/Bodygram Dropbox/datasets/validation/segment_img/front",
+    "imageType":"front",
+    "xSymbols":"+",
+    "ySymbols":"5y",
+    "isMap":true,
+    "isDummyBackground":false,
+    "isWeakSegmentation":false,
+    "isNaked":false,
+    "isTFMap":100,
+    "isDistanceMap":true
+}

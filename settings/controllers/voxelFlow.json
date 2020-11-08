@@ -1,0 +1,12 @@
+{
+  "generatorModel": "resnetGenerator",
+  "generatorCriterion": "feature",
+  "generatorOptimizer": "adam",
+  "discriminatorModel": "globallocal",
+  "discriminatorCriterion": "GANLoss",
+  "discriminatorOptimizer": "adam",
+  "lambda": 10,
+  "imagePoolSize": 50,
+  "lambda1": 0.01,
+  "lambda2": 0.005
+}

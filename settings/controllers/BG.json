@@ -1,0 +1,5 @@
+{
+  "model": "BG2",
+  "criterion": "MSE",
+  "optimizer": "adam"
+}

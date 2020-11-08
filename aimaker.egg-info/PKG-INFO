@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: aimaker
+Version: 0.1.3
+Summary: an end-to-end AI training and hosting tool
+Home-page: https://github.com/uyuutosa/aimaker
+Author: uyuutosa
+Author-email: sayu819@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Keywords: AI
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.6

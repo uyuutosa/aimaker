@@ -1,0 +1,25 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+glob2 = "==0.5"
+matplotlib = "==2.1.0"
+numpy = "==1.13.3"
+opencv-python = "==3.4.0.12"
+pandas = "==0.20.3"
+pillow = "==4.2.1"
+termcolor = "==1.1.0"
+scikit-image = "==0.13.0"
+scikit-learn = "==0.19.1"
+scipy = "==0.19.1"
+tornado = "==4.5.2"
+visdom = "==0.1.7"
+s3fs = "*"
+torch = "*"
+
+[requires]
+python_version = "3.6"
