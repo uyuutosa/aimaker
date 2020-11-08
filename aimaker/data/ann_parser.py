@@ -1,6 +1,5 @@
 import json
 import cv2
-import PIL.Image as I
 from numpy import *
 
 class AnnParser:
